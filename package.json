@@ -1,0 +1,24 @@
+{
+  "scripts": {
+    "build": "swc src --out-dir dist --sync",
+    "build-dev": "swc src --out-dir build/src -w --sync",
+    "test": "mocha --require ts-node/register tests/**/*.spec.ts  -extension ts"
+  },
+  "devDependencies": {
+    "@nhs-llc/emailjs-mime-parser": "^2.1.0",
+    "@swc/cli": "^0.1.46",
+    "@swc/core": "^1.2.62",
+    "@swc/register": "^0.1.7",
+    "@types/mocha": "^8.2.2",
+    "@types/node-forge": "^0.10.0",
+    "@types/nodemailer": "^6.4.2",
+    "chokidar": "^3.5.2",
+    "mocha": "^9.0.2",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "node-forge": "^0.10.0",
+    "nodemailer": "^6.6.2"
+  }
+}
