@@ -4,7 +4,6 @@ import {
   AS2Composer,
   AS2ComposerOptions,
   AS2Crypto,
-  request
 } from '../src'
 
 import {
@@ -87,15 +86,15 @@ describe('AS2Composer', async () => {
         }
       }
     })
-    const result = await request(
-      await composer.toRequestOptions(
-        'https://as2testing.centralus.cloudapp.azure.com/pub/Receive.rsb'
-      )
-    )
-    const mdn = await result.mime()
-    const message = await mdn.verify({ cert: AS2_TESTING_CERT })
-    if (!message) {
-      throw new Error('Signed MDN could not be verified.')
-    }
+    // const result = await request(
+    //   await composer.toRequestOptions(
+    //     'https://as2testing.centralus.cloudapp.azure.com/pub/Receive.rsb'
+    //   )
+    // )
+    // const mdn = await result.mime()
+    // const message = await mdn.verify({ cert: AS2_TESTING_CERT })
+    // if (!message) {
+    //   throw new Error('Signed MDN could not be verified.')
+    // }
   }).timeout(5000)
 })

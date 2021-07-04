@@ -1,5 +1,5 @@
 import 'mocha'
-import { AS2Parser, AS2Crypto } from '../core'
+import { AS2Parser, AS2Crypto } from '../src'
 import {
   LIBAS2_CERT,
   LIBAS2_KEY,

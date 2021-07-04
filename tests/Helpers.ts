@@ -85,23 +85,23 @@ export async function openssl (options: {
   }
 }
 
-export const LIBAS2_EDI_PATH = 'test/test-data/sample_edi.edi'
-export const LIBAS2_CERT_PATH = 'test/test-data/libas2community.cer'
-export const LIBAS2_KEY_PATH = 'test/test-data/libas2community.key'
+export const LIBAS2_EDI_PATH = 'tests/test-data/sample_edi.edi'
+export const LIBAS2_CERT_PATH = 'tests/test-data/libas2community.cer'
+export const LIBAS2_KEY_PATH = 'tests/test-data/libas2community.key'
 export const LIBAS2_EDI = readFileSync(LIBAS2_EDI_PATH, 'utf8')
 export const LIBAS2_CERT = readFileSync(LIBAS2_CERT_PATH, 'utf8')
 export const LIBAS2_KEY = readFileSync(LIBAS2_KEY_PATH, 'utf8')
 export const AS2_TESTING_CERT = readFileSync(
-  'test/test-data/as2Testing.cer',
+  'tests/test-data/as2Testing.cer',
   'utf8'
 )
 // Normalize line breaks for test files; original environment saved the files as crlf.
 export const ENCRYPTED_CONTENT = normalizeLineBreaks(
-  readFileSync('test/test-data/content.encrypted.txt', 'utf8')
+  readFileSync('tests/test-data/content.encrypted.txt', 'utf8')
 )
 export const SIGNED_CONTENT = normalizeLineBreaks(
-  readFileSync('test/test-data/content.signed.txt', 'utf8')
+  readFileSync('tests/test-data/content.signed.txt', 'utf8')
 )
 export const SIGNED_MDN = normalizeLineBreaks(
-  readFileSync('test/test-data/mdn.signed.txt', 'utf8')
+  readFileSync('tests/test-data/mdn.signed.txt', 'utf8')
 )

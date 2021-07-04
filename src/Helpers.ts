@@ -9,6 +9,10 @@ import { RequestOptions, IncomingMessage } from './Interfaces'
 import { Socket } from 'net'
 import { AS2Parser } from './AS2Parser'
 
+interface Result {
+    [key: string]: string | number | any
+}
+
 /** Method for converting a string of headers into key:value pairs. */
 export function parseHeaderString (
   headers: string
@@ -31,7 +35,7 @@ export function parseHeaderString (
   keyToLowerCase: boolean | Function = false,
   callback?: Function
 ): { [key: string]: any } {
-  const result = {}
+  const result = {} as Result 
 
   if (!headers) return result
   if (typeof keyToLowerCase === 'function') {
@@ -80,7 +84,7 @@ export function isNullOrUndefined (value: any): boolean {
   return value === undefined || value === null
 }
 
-export function isSMime (value: string) {
+export function isSMime (value: string): boolean {
   return (
     value.toLowerCase().startsWith('application/pkcs7') ||
     value.toLowerCase().startsWith('application/x-pkcs7')
@@ -105,38 +109,25 @@ export function canonicalTransform (
 
 /** Normalizes certificate signing options. */
 export function signingOptions (sign: SigningOptions): SigningOptions {
-  return { cert: '', key: '', chain: [], micalg: SIGNING.SHA256, ...sign }
+  return { ...sign }
 }
 
 /** Normalizes encryption options. */
 export function encryptionOptions (
   encrypt: EncryptionOptions
 ): EncryptionOptions {
-  return { cert: '', encryption: ENCRYPTION._3DES, ...encrypt }
+  return { ...encrypt }
 }
 
 /** Normalizes agreement options. */
 export function agreementOptions (
   agreement: AgreementOptions
 ): AgreementOptions {
-  const { mdn } = agreement
-  const { sign } = mdn
+//   const { mdn } = agreement
 
   return {
     version: '1.0',
     ...agreement,
-    mdn: isNullOrUndefined(mdn)
-      ? mdn
-      : {
-          ...mdn,
-          sign: isNullOrUndefined(sign)
-            ? sign
-            : {
-                importance: 'required',
-                protocol: 'pkcs7-signature',
-                ...sign
-              }
-        }
   }
 }
 

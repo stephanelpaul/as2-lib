@@ -14,8 +14,11 @@ import {
   
   /** Class for composing AS2 messages. */
   export class AS2Composer {
-    _agreement: AgreementOptions | AS2Headers | undefined = undefined
-    _message: AS2MimeNodeOptions | undefined = undefined
+    _agreement: AgreementOptions = agreementOptions({
+        sender: '',
+        recipient: ''
+    })
+    _message: AS2MimeNodeOptions
     _headers: Array<{
       key: string
       value: string
@@ -67,7 +70,7 @@ import {
   
               result.push({ key: STANDARD_HEADER.MDN_TO, value: mdn.to })
   
-              if (mdn?.sign) {
+              if (mdn?.sign !== undefined) {
                 // const sign = mdn.sign
                 result.push({
                   key: STANDARD_HEADER.MDN_OPTIONS,
@@ -103,44 +106,47 @@ import {
   
     async compile (): Promise<AS2MimeNode> {
       this.message = new AS2MimeNode({ ...this._message })
-      if (!isNullOrUndefined(this._agreement?.sign)) {
-        this.message.setSigning(this._agreement?.sign)
+      if (this._agreement && this._agreement.sign !== undefined) {
+          this.message.setSigning(this._agreement.sign)
       }
-      if (this._agreement && this._agreement.encrypt?) {
-        this.message.setEncryption(this._agreement.encrypt)
-      }
-      if (
-        !isNullOrUndefined(this._agreement.sign) ||
-        !isNullOrUndefined(this._message.sign)
-      ) {
-        this.message = await this.message.sign()
-      }
-      if (
-        !isNullOrUndefined(this._agreement.encrypt) ||
-        !isNullOrUndefined(this._message.encrypt)
-      ) {
-        this.message = await this.message.encrypt()
-      }
+    //   if (!isNullOrUndefined(this._agreement?.sign)) {
+    //     this.message.setSigning(this._agreement?.sign)
+    //   }
+    //   if (this._agreement && this._agreement.has) {
+    //     this.message.setEncryption(this._agreement.encrypt)
+    //   }
+    //   if (
+    //     !isNullOrUndefined(this._agreement.sign) ||
+    //     !isNullOrUndefined(this._message.sign)
+    //   ) {
+    //     this.message = await this.message.sign()
+    //   }
+    //   if (
+    //     !isNullOrUndefined(this._agreement.encrypt) ||
+    //     !isNullOrUndefined(this._message.encrypt)
+    //   ) {
+    //     this.message = await this.message.encrypt()
+    //   }
   
       this.message.setHeader(this._headers)
   
       return this.message
     }
   
-    async toRequestOptions (url: string): Promise<RequestOptions> {
-      if (this.message === undefined) {
-        await this.compile()
-      }
-      const buffer = await this.message.build()
-      const [headers, ...body] = buffer
-        .toString('utf8')
-        .split(/(\r\n|\n\r|\n)(\r\n|\n\r|\n)/gu)
+    // async toRequestOptions (url: string): Promise<RequestOptions> {
+    //   if (this.message === undefined) {
+    //     await this.compile()
+    //   }
+    //   const buffer = await this.message?.build()
+    //   const [headers, ...body] = buffer
+    //     ?.toString('utf8')
+    //     .split(/(\r\n|\n\r|\n)(\r\n|\n\r|\n)/gu)
   
-      return {
-        url,
-        headers: parseHeaderString(headers),
-        body: body.join('').trimLeft(),
-        method: 'POST'
-      }
-    }
+    //   return {
+    //     url,
+    //     headers: parseHeaderString(headers),
+    //     body: body.join('').trimLeft(),
+    //     method: 'POST'
+    //   }
+    // }
   }

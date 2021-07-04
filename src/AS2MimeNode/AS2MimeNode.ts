@@ -20,14 +20,14 @@ import { hostname } from 'os'
 export interface AS2MimeNode {
   keepBcc: boolean
   _headers: Array<{
-    key: string
+    key: string 
     value: string
   }>
-  filename: string
+  filename: string | undefined
   date: Date
-  boundaryPrefix: string
+  boundaryPrefix: string | undefined
   content: string | Buffer | Readable
-  contentType: string
+  contentType: string | undefined
   rootNode: AS2MimeNode
   parentNode?: AS2MimeNode
   childNodes: AS2MimeNode[]
@@ -42,6 +42,9 @@ export interface AS2MimeNode {
 /** Class for describing and constructing a MIME document. */
 export class AS2MimeNode extends MimeNode {
   constructor (options: AS2MimeNodeOptions) {
+
+    super(options?.contentType, { filename: options?.filename, baseBoundary: options?.baseBoundary })
+
     const {
       filename,
       content,
@@ -55,41 +58,36 @@ export class AS2MimeNode extends MimeNode {
       encrypt
     } = options
 
-    super(contentType, { filename, baseBoundary })
 
     this.contentType = contentType
-    this.boundaryPrefix = isNullOrUndefined(boundaryPrefix)
-      ? '--LibAs2'
-      : boundaryPrefix === false
-      ? ''
-      : boundaryPrefix
+    this.boundaryPrefix = boundaryPrefix || '--LibAs2'
 
-    if (!isNullOrUndefined(content)) this.setContent(content)
-    if (!isNullOrUndefined(headers)) this.setHeader(headers)
-    if (!isNullOrUndefined(sign)) this.setSigning(sign)
-    if (!isNullOrUndefined(encrypt)) this.setEncryption(encrypt)
-    if (!isNullOrUndefined(messageId)) this.setHeader('Message-ID', messageId)
-    if (
-      !isNullOrUndefined(contentDisposition) &&
-      contentDisposition !== false
-    ) {
-      this.setHeader(
-        'Content-Disposition',
-        contentDisposition === true ? 'attachment' : contentDisposition
-      )
-    }
+    // if (!isNullOrUndefined(content)) this.setContent(content)
+    // if (!isNullOrUndefined(headers)) this.setHeader(headers)
+    // if (!isNullOrUndefined(sign)) this.setSigning(sign)
+    // if (!isNullOrUndefined(encrypt)) this.setEncryption(encrypt)
+    // if (!isNullOrUndefined(messageId)) this.setHeader('Message-ID', messageId)
+    // if (
+    //   !isNullOrUndefined(contentDisposition) &&
+    //   contentDisposition !== false
+    // ) {
+    //   this.setHeader(
+    //     'Content-Disposition',
+    //     contentDisposition === true ? 'attachment' : contentDisposition
+    //   )
+    // }
     if (this.contentType) {
-      this.signed = contentType.toLowerCase().startsWith('multipart/signed')
-      this.encrypted = contentType
-        .toLowerCase()
-        .startsWith('multipart/encrypted')
-      this.smime = isSMime(contentType)
+      this.signed = contentType?.toLowerCase()?.startsWith('multipart/signed')
+      this.encrypted = contentType?.toLowerCase()?.startsWith('multipart/encrypted')
+      this.smime = isSMime(contentType?.toLowerCase() || '') || false
+      // this.smime = 
       this.compressed = false
       if (this.smime) {
-        let applicationType: string
+        let applicationType: string = ''
 
-        // Check for actual smime-type
-        for (let part of contentType.split(/;/gu)) {
+        const parts = contentType?.split(/;/gu) || []
+
+        for (let part of parts) {
           let [key, value] = part.trim().split(/=/gu)
           key = key.trim().toLowerCase()
 
@@ -103,7 +101,7 @@ export class AS2MimeNode extends MimeNode {
         }
 
         // Infer smime-type
-        if (this.smimeType === undefined || this.smimeType === '') {
+        if (!this.smimeType || this.smimeType === '') {
           if (applicationType.endsWith('signature')) {
             this.smimeType = 'signed-data'
           } else {
@@ -120,14 +118,14 @@ export class AS2MimeNode extends MimeNode {
     this.parsed = false
   }
 
-  private _sign: SigningOptions
-  private _encrypt: EncryptionOptions
-  parsed: boolean
-  smime: boolean
-  signed: boolean
-  encrypted: boolean
-  compressed: boolean
-  smimeType: string
+  private _sign: SigningOptions = {} as SigningOptions
+  private _encrypt: EncryptionOptions = {} as EncryptionOptions
+  parsed: boolean = false
+  smime: boolean = false
+  signed?: boolean = false
+  encrypted?: boolean = false
+  compressed?: boolean = false
+  smimeType: string = ''
 
   setSigning (options: SigningOptions): void {
     this._sign = signingOptions(options)
@@ -155,12 +153,12 @@ export class AS2MimeNode extends MimeNode {
   }
 
   async sign (options?: SigningOptions): Promise<AS2MimeNode> {
-    options = isNullOrUndefined(options) ? this._sign : options
+    options = isNullOrUndefined(options) ? this._sign : options || {} as SigningOptions
 
     return AS2Crypto.sign(this, options)
   }
 
-  async verify (options: VerificationOptions): Promise<AS2MimeNode> {
+  async verify (options: VerificationOptions): Promise<AS2MimeNode|undefined> {
     return (await AS2Crypto.verify(this, options))
       ? this.childNodes[0]
       : undefined
@@ -171,7 +169,7 @@ export class AS2MimeNode extends MimeNode {
   }
 
   async encrypt (options?: EncryptionOptions): Promise<AS2MimeNode> {
-    options = isNullOrUndefined(options) ? this._encrypt : options
+    options = isNullOrUndefined(options) ? this._encrypt : options || {} as EncryptionOptions
 
     return AS2Crypto.encrypt(this, options)
   }

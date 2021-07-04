@@ -153,8 +153,10 @@ export class AS2Crypto {
     node: AS2MimeNode,
     options: SigningOptions
   ): Promise<AS2MimeNode> {
+    const { micalg = 'sha1' } = options
+
     const rootNode = new AS2MimeNode({
-      contentType: `multipart/signed; protocol="application/pkcs7-signature"; micalg=${options.micalg};`,
+      contentType: `multipart/signed; protocol="application/pkcs7-signature"; micalg=${micalg};`,
       encrypt: (node as any)._encrypt
     })
     const contentNode = rootNode.appendChild(node) as AS2MimeNode
@@ -187,7 +189,7 @@ export class AS2Crypto {
     p7.addSigner({
       key: options.key,
       certificate: options.cert,
-      digestAlgorithm: forge.pki.oids[options.micalg],
+      digestAlgorithm: forge.pki.oids[micalg],
       authenticatedAttributes: [
         {
           type: forge.pki.oids.contentType,

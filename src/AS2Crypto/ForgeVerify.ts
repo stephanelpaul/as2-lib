@@ -226,7 +226,8 @@ export function verify (verifier: {
   detached?: string | forge.util.ByteBuffer
   certificate: string | forge.pki.Certificate
 }): boolean {
-  const msg: forge.pkcs7.PkcsSignedData = this
+  // ts-ignore 
+  let msg: forge.pkcs7.PkcsSignedData = this;
   let verified: boolean = false
   let cert: forge.pki.Certificate
   let content: string | forge.util.ByteBuffer
@@ -302,9 +303,14 @@ export function verify (verifier: {
     // RFC 5652 requires the contents to match the message digest in the signed attributes.
     if (contentMessageDigest.digest().getBytes() === messageDigest) {
       // Compute message digest of signed attributes and verify with signature.
-      const signedAttrMessageDigest = forge.md[
+
+      let signedAttrMessageDigest = (forge.md[
         forge.pki.oids[algorithm]
-      ].create() as forge.md.MessageDigest
+      ].create() as forge.md.MessageDigest)
+
+      // const signedAttrMessageDigest = forge.md[
+      //   forge.pki.oids[algorithm]
+      // ].create() as forge.md.MessageDigest
       // Per RFC 2315, attributes are to be digested using a SET container
       const attrsAsn1 = forge.asn1.create(
         forge.asn1.Class.UNIVERSAL,
