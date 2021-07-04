@@ -109,44 +109,44 @@ import {
       if (this._agreement && this._agreement.sign !== undefined) {
           this.message.setSigning(this._agreement.sign)
       }
-    //   if (!isNullOrUndefined(this._agreement?.sign)) {
-    //     this.message.setSigning(this._agreement?.sign)
-    //   }
-    //   if (this._agreement && this._agreement.has) {
-    //     this.message.setEncryption(this._agreement.encrypt)
-    //   }
-    //   if (
-    //     !isNullOrUndefined(this._agreement.sign) ||
-    //     !isNullOrUndefined(this._message.sign)
-    //   ) {
-    //     this.message = await this.message.sign()
-    //   }
-    //   if (
-    //     !isNullOrUndefined(this._agreement.encrypt) ||
-    //     !isNullOrUndefined(this._message.encrypt)
-    //   ) {
-    //     this.message = await this.message.encrypt()
-    //   }
+      if (!isNullOrUndefined(this._agreement?.sign)) {
+        this.message.setSigning(this._agreement?.sign)
+      }
+      if (this._agreement && this._agreement?.encrypt) {
+        this.message.setEncryption(this._agreement.encrypt)
+      }
+      if (
+        !isNullOrUndefined(this._agreement.sign) ||
+        !isNullOrUndefined(this._message.sign)
+      ) {
+        this.message = await this.message.sign()
+      }
+      if (
+        !isNullOrUndefined(this._agreement.encrypt) ||
+        !isNullOrUndefined(this._message.encrypt)
+      ) {
+        this.message = await this.message.encrypt()
+      }
   
       this.message.setHeader(this._headers)
   
       return this.message
     }
   
-    // async toRequestOptions (url: string): Promise<RequestOptions> {
-    //   if (this.message === undefined) {
-    //     await this.compile()
-    //   }
-    //   const buffer = await this.message?.build()
-    //   const [headers, ...body] = buffer
-    //     ?.toString('utf8')
-    //     .split(/(\r\n|\n\r|\n)(\r\n|\n\r|\n)/gu)
+    async toRequestOptions (url: string): Promise<RequestOptions> {
+      if (this.message === undefined) {
+        await this.compile()
+      }
+      const buffer = await this.message?.build()
+      const [headers, ...body] = buffer
+        ?.toString('utf8')
+        .split(/(\r\n|\n\r|\n)(\r\n|\n\r|\n)/gu)
   
-    //   return {
-    //     url,
-    //     headers: parseHeaderString(headers),
-    //     body: body.join('').trimLeft(),
-    //     method: 'POST'
-    //   }
-    // }
+      return {
+        url,
+        headers: parseHeaderString(headers),
+        body: body.join('').trimLeft(),
+        method: 'POST'
+      }
+    }
   }

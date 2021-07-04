@@ -91,6 +91,8 @@ export const LIBAS2_KEY_PATH = 'tests/test-data/libas2community.key'
 export const LIBAS2_EDI = readFileSync(LIBAS2_EDI_PATH, 'utf8')
 export const LIBAS2_CERT = readFileSync(LIBAS2_CERT_PATH, 'utf8')
 export const LIBAS2_KEY = readFileSync(LIBAS2_KEY_PATH, 'utf8')
+
+console.info(LIBAS2_KEY)
 export const AS2_TESTING_CERT = readFileSync(
   'tests/test-data/as2Testing.cer',
   'utf8'

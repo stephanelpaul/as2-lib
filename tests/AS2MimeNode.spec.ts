@@ -41,7 +41,9 @@ describe('AS2MimeNode', async () => {
       encrypt: { cert: LIBAS2_CERT, encryption: AS2Constants.ENCRYPTION._3DES },
       content: LIBAS2_EDI
     })
+
     const encrypted = await smime.build()
+
     const output = await openssl({
       command: 'cms',
       input: encrypted,
@@ -52,6 +54,7 @@ describe('AS2MimeNode', async () => {
         des3: true
       }
     })
+
     const parsed = await AS2Parser.parse(output)
     const opensslContent = parsed.childNodes[0].content.toString('utf8')
 

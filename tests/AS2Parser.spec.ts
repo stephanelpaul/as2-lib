@@ -50,7 +50,7 @@ describe('AS2Parser', async () => {
         }'`
       )
     }
-    // console.log(result)
+    console.log(result)
     const mdn = new AS2Disposition(result)
 
     if (result.messageId() !== mdn.messageId) {

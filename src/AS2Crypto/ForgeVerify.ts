@@ -285,6 +285,8 @@ export function verify (verifier: {
     signature
   } = findSignerInfo(cert, (msg as any).rawCapture.signerInfos)
   const algorithm = forge.asn1.derToOid(digestAlgorithm)
+
+  console.info(algorithm);
   const contentMessageDigest = forge.md[
     forge.pki.oids[algorithm]
   ].create() as forge.md.MessageDigest
